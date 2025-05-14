@@ -1,6 +1,7 @@
 package ordertransport
 
 import (
+	itemstorage "dev-coffee-api/modules/items/storage"
 	ordermodel "dev-coffee-api/modules/orders/model"
 	orderservice "dev-coffee-api/modules/orders/service"
 	orderstorage "dev-coffee-api/modules/orders/storage"
@@ -18,7 +19,8 @@ func CreateOrder(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		store := orderstorage.NewSQLStorage(db)
-		service := orderservice.NewCreateOrderService(store)
+		itemStore := itemstorage.NewSQLStorage(db)
+		service := orderservice.NewCreateOrderService(store, itemStore)
 
 		err := service.CreateOrder(c.Request.Context(), &data)
 		if err != nil {
