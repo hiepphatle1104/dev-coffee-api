@@ -1,6 +1,7 @@
 package ordertransport
 
 import (
+	itemstorage "dev-coffee-api/modules/items/storage"
 	ordermodel "dev-coffee-api/modules/orders/model"
 	orderservice "dev-coffee-api/modules/orders/service"
 	orderstorage "dev-coffee-api/modules/orders/storage"
@@ -25,7 +26,8 @@ func UpdateOrder(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		store := orderstorage.NewSQLStorage(db)
-		service := orderservice.NewUpdateOrderByIdService(store)
+		itemStore := itemstorage.NewSQLStorage(db)
+		service := orderservice.NewUpdateOrderByIdService(store, itemStore)
 
 		err = service.UpdateOrderById(c.Request.Context(), id, &data)
 		if err != nil {

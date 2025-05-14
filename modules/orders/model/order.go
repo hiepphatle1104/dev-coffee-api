@@ -3,7 +3,7 @@ package ordermodel
 type Order struct {
 	ID           int          `json:"id" gorm:"column:id;"`
 	CustomerName string       `json:"customer_name" gorm:"column:customer_name;"`
-	Status       OrderStatus  `json:"status" gorm:"column:status;"`
+	Status       *OrderStatus `json:"status" gorm:"column:status;"`
 	OrderItems   *[]OrderItem `json:"order_items" gorm:"-"`
 	CreatedAt    string       `json:"created_at" gorm:"column:created_at;"`
 	UpdatedAt    string       `json:"updated_at" gorm:"column:updated_at;"`
@@ -22,7 +22,7 @@ func (OrderCreation) TableName() string { return Order{}.TableName() }
 type OrderUpdate struct {
 	ID           int          `json:"-" gorm:"column:id;"`
 	CustomerName string       `json:"customer_name" gorm:"column:customer_name;"`
-	Status       OrderStatus  `json:"status" gorm:"column:status;"`
+	Status       *OrderStatus `json:"status" gorm:"column:status;"`
 	OrderItems   *[]OrderItem `json:"order_items" gorm:"-"`
 }
 
