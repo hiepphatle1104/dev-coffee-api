@@ -1,9 +1,13 @@
-package model
+package itemmodel
 
 type Paging struct {
 	Page  int   `json:"page" form:"page"`
 	Limit int   `json:"limit" form:"limit"`
-	Total int64 `json:"total" form:"total"`
+	Total int64 `json:"total"`
+}
+
+func (p *Paging) Offset() int {
+	return (p.Page - 1) * p.Limit
 }
 
 func (p *Paging) Process() {

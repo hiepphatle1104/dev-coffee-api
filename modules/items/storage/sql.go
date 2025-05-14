@@ -1,4 +1,4 @@
-package storage
+package itemstorage
 
 import "gorm.io/gorm"
 
