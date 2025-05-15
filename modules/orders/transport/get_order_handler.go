@@ -48,7 +48,7 @@ func GetOrderById(db *gorm.DB) gin.HandlerFunc {
 		store := orderstorage.NewSQLStorage(db)
 		service := orderservice.NewGetOrderByIdService(store)
 
-		data, err := service.GetOrderById(c.Request.Context(), id)
+		data, err := service.GetOrderByID(c.Request.Context(), id)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return

@@ -29,7 +29,7 @@ func UpdateOrder(db *gorm.DB) gin.HandlerFunc {
 		itemStore := itemstorage.NewSQLStorage(db)
 		service := orderservice.NewUpdateOrderByIdService(store, itemStore)
 
-		err = service.UpdateOrderById(c.Request.Context(), id, &data)
+		err = service.UpdateOrderByID(c.Request.Context(), id, &data)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return

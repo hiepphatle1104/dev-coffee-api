@@ -17,7 +17,7 @@ func NewGetOrderByIdService(store GetOrderByIdStorage) *GetOrderByIdService {
 	return &GetOrderByIdService{store: store}
 }
 
-func (s *GetOrderByIdService) GetOrderById(ctx context.Context, id int) (*ordermodel.Order, error) {
+func (s *GetOrderByIdService) GetOrderByID(ctx context.Context, id int) (*ordermodel.Order, error) {
 	order, err := s.store.GetOrderByID(ctx, id)
 	if err != nil {
 		return nil, err

@@ -20,7 +20,7 @@ func DeleteOrder(db *gorm.DB) gin.HandlerFunc {
 		store := orderstorage.NewSQLStorage(db)
 		service := orderservice.NewDeleteOrderByIdService(store)
 
-		err = service.DeleteOrderById(c.Request.Context(), id)
+		err = service.DeleteOrderByID(c.Request.Context(), id)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return

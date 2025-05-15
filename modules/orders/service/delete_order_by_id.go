@@ -14,6 +14,6 @@ func NewDeleteOrderByIdService(store DeleteOrderByIdStorage) *DeleteOrderByIdSer
 	return &DeleteOrderByIdService{store: store}
 }
 
-func (s *DeleteOrderByIdService) DeleteOrderById(ctx context.Context, id int) error {
+func (s *DeleteOrderByIdService) DeleteOrderByID(ctx context.Context, id int) error {
 	return s.store.DeleteOrderById(ctx, id)
 }

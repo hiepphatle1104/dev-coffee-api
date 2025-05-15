@@ -20,7 +20,7 @@ func NewUpdateOrderByIdService(store UpdateOrderByIdStorage, itemStore itemmodel
 	return &UpdateOrderByIdService{store: store, itemStore: itemStore}
 }
 
-func (s *UpdateOrderByIdService) UpdateOrderById(ctx context.Context, id int, data *ordermodel.OrderUpdate) error {
+func (s *UpdateOrderByIdService) UpdateOrderByID(ctx context.Context, id int, data *ordermodel.OrderUpdate) error {
 
 	if data.CustomerName == "" {
 		return errors.New("customer name is required")
@@ -30,11 +30,14 @@ func (s *UpdateOrderByIdService) UpdateOrderById(ctx context.Context, id int, da
 		return errors.New("order items is required")
 	}
 
-	for _, orderItem := range *data.OrderItems {
-		_, err := s.itemStore.GetItemById(ctx, orderItem.ItemID)
+	for i := range *data.OrderItems {
+		orderItem := &(*data.OrderItems)[i]
+		item, err := s.itemStore.GetItemById(ctx, orderItem.ItemID)
 		if err != nil {
 			return errors.New("item not found")
 		}
+
+		orderItem.UnitPrice = item.UnitPrice
 	}
 
 	return s.store.UpdateOrderByID(ctx, id, data)
