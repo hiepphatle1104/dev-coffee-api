@@ -37,6 +37,10 @@ func (s *UpdateOrderByIdService) UpdateOrderByID(ctx context.Context, id int, da
 			return errors.New("item not found")
 		}
 
+		if !*item.Available {
+			return errors.New("item is not available")
+		}
+
 		orderItem.UnitPrice = item.UnitPrice
 	}
 

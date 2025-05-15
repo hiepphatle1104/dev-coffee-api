@@ -36,6 +36,10 @@ func (s *CreateOrderService) CreateOrder(ctx context.Context, data *ordermodel.O
 			return errors.New("item not found")
 		}
 
+		if !*item.Available {
+			return errors.New("item is not available")
+		}
+
 		orderItem.UnitPrice = item.UnitPrice
 	}
 
