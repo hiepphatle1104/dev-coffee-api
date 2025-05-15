@@ -3,6 +3,7 @@ package paymenttransport
 import (
 	ordermodel "dev-coffee-api/modules/orders/model"
 	paymentmodel "dev-coffee-api/modules/payments/model"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
@@ -35,6 +36,8 @@ func CreateNewPayment(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		data.Amount = amount
+
+		fmt.Println(data)
 
 		if err := db.Create(&data).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

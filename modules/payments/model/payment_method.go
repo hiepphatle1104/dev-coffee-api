@@ -3,6 +3,7 @@ package paymentmodel
 import (
 	"database/sql/driver"
 	"errors"
+	"fmt"
 	"strings"
 )
 
@@ -14,7 +15,7 @@ const (
 	PaymentMethodBankTransfer
 )
 
-var allPaymentMethods = [3]string{"cash", "card", "bank_transfer"}
+var allPaymentMethods = [3]string{"cash", "card", "bank-transfer"}
 
 func (method *PaymentMethod) String() string {
 	return allPaymentMethods[*method]
@@ -58,7 +59,7 @@ func (method *PaymentMethod) MarshalJSON() ([]byte, error) {
 		return nil, nil
 	}
 
-	return []byte(method.String()), nil
+	return []byte(fmt.Sprintf("\"%s\"", method.String())), nil
 }
 
 func (method *PaymentMethod) UnmarshalJSON(data []byte) error {
