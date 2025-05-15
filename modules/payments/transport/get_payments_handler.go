@@ -2,6 +2,8 @@ package paymenttransport
 
 import (
 	paymentmodel "dev-coffee-api/modules/payments/model"
+	paymentservice "dev-coffee-api/modules/payments/service"
+	paymentstorage "dev-coffee-api/modules/payments/storage"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
@@ -17,13 +19,16 @@ func GetPaymentsList(db *gorm.DB) gin.HandlerFunc {
 		}
 		paging.Process()
 
-		var payments []paymentmodel.Payment
-		if err := db.Find(&payments).Error; err != nil {
+		store := paymentstorage.NewSQLStorage(db)
+		service := paymentservice.NewGetPaymentsListService(store)
+
+		data, err := service.GetPaymentsList(c.Request.Context(), &paging)
+		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"data": payments, "paging": paging})
+		c.JSON(http.StatusOK, gin.H{"data": data, "paging": paging})
 	}
 }
 
@@ -35,12 +40,15 @@ func GetPaymentByID(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		var payment paymentmodel.Payment
-		if err = db.Where("order_id = ?", orderId).First(&payment).Error; err != nil {
+		store := paymentstorage.NewSQLStorage(db)
+		service := paymentservice.NewGetPaymentByIDService(store)
+
+		data, err := service.GetPaymentByID(c.Request.Context(), orderId)
+		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"data": true})
+		c.JSON(http.StatusOK, gin.H{"data": data})
 	}
 }

@@ -1,6 +1,9 @@
 package ordermodel
 
-import itemmodel "dev-coffee-api/modules/items/model"
+import (
+	"context"
+	itemmodel "dev-coffee-api/modules/items/model"
+)
 
 type OrderItem struct {
 	OrderID   int             `json:"-" gorm:"column:order_id;"`
@@ -12,3 +15,7 @@ type OrderItem struct {
 }
 
 func (OrderItem) TableName() string { return "order_items" }
+
+type OrderItemStorage interface {
+	GetOrderItemsByID(ctx context.Context, id int) (*[]OrderItem, error)
+}

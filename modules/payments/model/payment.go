@@ -3,7 +3,7 @@ package paymentmodel
 import ordermodel "dev-coffee-api/modules/orders/model"
 
 type Payment struct {
-	ID      int               `json:"id" gorm:"column:id;"`
+	ID      int               `json:"-" gorm:"column:id;"`
 	OrderID int               `json:"order_id" gorm:"column:order_id;"`
 	Amount  float64           `json:"amount" gorm:"column:amount;"`
 	Method  *PaymentMethod    `json:"method" gorm:"column:method;"`

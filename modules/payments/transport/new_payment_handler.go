@@ -1,9 +1,10 @@
 package paymenttransport
 
 import (
-	ordermodel "dev-coffee-api/modules/orders/model"
+	orderstorage "dev-coffee-api/modules/orders/storage"
 	paymentmodel "dev-coffee-api/modules/payments/model"
-	"fmt"
+	paymentservice "dev-coffee-api/modules/payments/service"
+	paymentstorage "dev-coffee-api/modules/payments/storage"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
@@ -17,29 +18,12 @@ func CreateNewPayment(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		var exists paymentmodel.Payment
-		if err := db.Where("order_id = ?", data.OrderID).First(&exists).Error; err == nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "some error while creating payment"})
-			return
-		}
+		store := paymentstorage.NewSQLStorage(db)
+		orderItemStore := orderstorage.NewSQLStorage(db)
+		service := paymentservice.NewCreateNewPaymentService(store, orderItemStore)
 
-		// Summarize total amount
-		var amount float64 = 0
-		var orderItems []ordermodel.OrderItem
-		if err := db.Table(ordermodel.OrderItem{}.TableName()).Where("order_id = ?", data.OrderID).Find(&orderItems).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-
-		for _, item := range orderItems {
-			amount += item.UnitPrice * float64(item.Quantity)
-		}
-
-		data.Amount = amount
-
-		fmt.Println(data)
-
-		if err := db.Create(&data).Error; err != nil {
+		err := service.CreateNewPayment(c.Request.Context(), &data)
+		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
