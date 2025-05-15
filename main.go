@@ -4,6 +4,7 @@ import (
 	"dev-coffee-api/common"
 	itemtransport "dev-coffee-api/modules/items/transport"
 	ordertransport "dev-coffee-api/modules/orders/transport"
+	paymenttransport "dev-coffee-api/modules/payments/transport"
 	"github.com/gin-gonic/gin"
 )
 
@@ -30,6 +31,13 @@ func main() {
 		orders.GET("/:id", ordertransport.GetOrderById(db))
 		orders.PATCH("/:id", ordertransport.UpdateOrder(db))
 		orders.DELETE("/:id", ordertransport.DeleteOrder(db))
+	}
+
+	payments := v1.Group("/payments")
+	{
+		payments.GET("", paymenttransport.GetPaymentsList(db))
+		payments.POST("", paymenttransport.CreateNewPayment(db))
+		payments.GET("/:order-id", paymenttransport.GetPaymentByID(db))
 	}
 
 	err := router.Run(":" + port)
