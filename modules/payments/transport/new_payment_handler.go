@@ -20,7 +20,8 @@ func CreateNewPayment(db *gorm.DB) gin.HandlerFunc {
 
 		store := paymentstorage.NewSQLStorage(db)
 		orderItemStore := orderstorage.NewSQLStorage(db)
-		service := paymentservice.NewCreateNewPaymentService(store, orderItemStore)
+		orderStore := orderstorage.NewSQLStorage(db)
+		service := paymentservice.NewCreateNewPaymentService(store, orderItemStore, orderStore)
 
 		err := service.CreateNewPayment(c.Request.Context(), &data)
 		if err != nil {

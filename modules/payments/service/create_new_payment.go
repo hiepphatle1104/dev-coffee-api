@@ -4,6 +4,7 @@ import (
 	"context"
 	ordermodel "dev-coffee-api/modules/orders/model"
 	paymentmodel "dev-coffee-api/modules/payments/model"
+	"errors"
 )
 
 type CreateNewPaymentStorage interface {
@@ -14,16 +15,32 @@ type CreateNewPaymentStorage interface {
 type CreateNewPaymentService struct {
 	store          CreateNewPaymentStorage
 	orderItemStore ordermodel.OrderItemStorage
+	orderStore     ordermodel.OrderStorage
 }
 
-func NewCreateNewPaymentService(store CreateNewPaymentStorage, orderItemStore ordermodel.OrderItemStorage) *CreateNewPaymentService {
-	return &CreateNewPaymentService{store: store, orderItemStore: orderItemStore}
+func NewCreateNewPaymentService(
+	store CreateNewPaymentStorage,
+	orderItemStore ordermodel.OrderItemStorage,
+	orderStore ordermodel.OrderStorage,
+) *CreateNewPaymentService {
+
+	return &CreateNewPaymentService{
+		store:          store,
+		orderItemStore: orderItemStore,
+		orderStore:     orderStore,
+	}
 }
 
 func (s *CreateNewPaymentService) CreateNewPayment(ctx context.Context, data *paymentmodel.PaymentCreation) error {
-	_, err := s.store.GetPaymentByID(ctx, data.OrderID)
+	//  Not found order
+	_, err := s.orderStore.GetOrderByID(ctx, data.OrderID)
 	if err != nil {
 		return err
+	}
+
+	exists, _ := s.store.GetPaymentByID(ctx, data.OrderID)
+	if exists != nil {
+		return errors.New("you have already paid for this order")
 	}
 
 	orderItems, err := s.orderItemStore.GetOrderItemsByID(ctx, data.OrderID)

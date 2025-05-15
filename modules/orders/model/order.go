@@ -1,5 +1,7 @@
 package ordermodel
 
+import "context"
+
 type Order struct {
 	ID           int          `json:"id" gorm:"column:id;"`
 	CustomerName string       `json:"customer_name" gorm:"column:customer_name;"`
@@ -27,3 +29,11 @@ type OrderUpdate struct {
 }
 
 func (OrderUpdate) TableName() string { return Order{}.TableName() }
+
+func NewOrderUpdateStatus(status *OrderStatus) *OrderUpdate {
+	return &OrderUpdate{Status: status}
+}
+
+type OrderStorage interface {
+	GetOrderByID(ctx context.Context, id int) (*Order, error)
+}

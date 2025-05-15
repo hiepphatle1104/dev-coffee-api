@@ -15,10 +15,11 @@ func (s *sqlStorage) CreateNewPayment(ctx context.Context, data *paymentmodel.Pa
 		}
 
 		// Update order status
+		status := ordermodel.OrderStatusCompleted
 		if err := tx.Table(ordermodel.Order{}.
 			TableName()).
 			Where("id = ?", data.OrderID).
-			Update("status", ordermodel.OrderStatusCompleted).Error; err != nil {
+			Updates(ordermodel.NewOrderUpdateStatus(&status)).Error; err != nil {
 			return err
 		}
 

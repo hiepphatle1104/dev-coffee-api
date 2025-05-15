@@ -7,7 +7,6 @@ import (
 )
 
 func (s *sqlStorage) GetOrderByID(ctx context.Context, id int) (*ordermodel.Order, error) {
-
 	var data ordermodel.Order
 
 	err := s.db.Transaction(func(tx *gorm.DB) error {
