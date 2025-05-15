@@ -29,11 +29,14 @@ func (s *CreateOrderService) CreateOrder(ctx context.Context, data *ordermodel.O
 		return errors.New("order items is required")
 	}
 
-	for _, orderItem := range *data.OrderItems {
-		_, err := s.itemStore.GetItemById(ctx, orderItem.ItemID)
+	for i := range *data.OrderItems {
+		orderItem := &(*data.OrderItems)[i]
+		item, err := s.itemStore.GetItemById(ctx, orderItem.ItemID)
 		if err != nil {
 			return errors.New("item not found")
 		}
+
+		orderItem.UnitPrice = item.UnitPrice
 	}
 
 	return s.store.Create(ctx, data)
