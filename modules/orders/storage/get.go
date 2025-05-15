@@ -52,3 +52,13 @@ func (s *sqlStorage) GetOrders(ctx context.Context, paging *ordermodel.Paging) (
 
 	return &data, err
 }
+
+func (s *sqlStorage) GetOrderItems(ctx context.Context, orderId int) (*[]ordermodel.OrderItem, error) {
+	var orderItems []ordermodel.OrderItem
+	err := s.db.Table(ordermodel.OrderItem{}.TableName()).Where("order_id = ?", orderId).Find(&orderItems).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &orderItems, nil
+}

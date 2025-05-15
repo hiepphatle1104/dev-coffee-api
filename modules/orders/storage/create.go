@@ -24,3 +24,7 @@ func (s *sqlStorage) Create(ctx context.Context, data *ordermodel.OrderCreation)
 		return nil
 	})
 }
+
+func (s *sqlStorage) CreateOrderItem(ctx context.Context, data *ordermodel.OrderItem) error {
+	return s.db.Create(&data).Error
+}
