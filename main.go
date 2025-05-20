@@ -5,14 +5,21 @@ import (
 	item "dev-coffee-api/modules/items/transport"
 	order "dev-coffee-api/modules/orders/transport"
 	payment "dev-coffee-api/modules/payments/transport"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	port := common.EnvLookup("PORT")
+	appHost := common.EnvLookup("APP_HOST")
 	db := common.NewMySQLDatabase()
 
 	router := gin.Default()
+
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{appHost}
+
+	router.Use(cors.New(config))
 
 	v1 := router.Group("/api/v1")
 	items := v1.Group("/items")
