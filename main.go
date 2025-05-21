@@ -7,9 +7,20 @@ import (
 	payment "dev-coffee-api/modules/payments/transport"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
+	"log"
 )
 
+func loadEnvFile() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error while loading .env file")
+	}
+}
+
 func main() {
+	loadEnvFile()
+
 	port := common.EnvLookup("PORT")
 	appHost := common.EnvLookup("APP_HOST")
 	db := common.NewMySQLDatabase()

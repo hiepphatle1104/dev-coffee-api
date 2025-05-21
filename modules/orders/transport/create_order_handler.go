@@ -28,6 +28,6 @@ func CreateOrder(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"data": true})
+		c.JSON(http.StatusCreated, gin.H{"data": data.ID})
 	}
 }

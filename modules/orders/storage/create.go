@@ -10,7 +10,7 @@ func (s *sqlStorage) Create(ctx context.Context, data *ordermodel.OrderCreation)
 	return s.db.Transaction(func(tx *gorm.DB) error {
 		// Insert order
 		if err := tx.Create(&data).Error; err != nil {
-			return err
+			return nil
 		}
 
 		// Insert order items
