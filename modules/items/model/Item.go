@@ -18,6 +18,7 @@ func (Item) TableName() string {
 }
 
 type ItemCreation struct {
+	ID        int        `json:"-" gorm:"column:id;"`
 	Name      string     `json:"name" gorm:"column:name;"`
 	Type      *ItemType  `json:"type" gorm:"column:type;"`
 	UnitPrice float64    `json:"unit_price" gorm:"column:unit_price;"`
@@ -30,6 +31,7 @@ func (ItemCreation) TableName() string {
 }
 
 type ItemUpdate struct {
+	ID        int        `json:"-" gorm:"column:id;"`
 	Name      string     `json:"name" gorm:"column:name;"`
 	Type      *ItemType  `json:"type" gorm:"column:type;"`
 	UnitPrice float64    `json:"unit_price" gorm:"column:unit_price;"`

@@ -20,6 +20,7 @@ func loadEnvFile() {
 
 func main() {
 	loadEnvFile()
+	//gin.SetMode(gin.ReleaseMode)
 
 	port := common.EnvLookup("PORT")
 	appHost := common.EnvLookup("APP_HOST")
@@ -49,6 +50,8 @@ func main() {
 		orders.GET("/:id", order.GetOrderById(db))
 		orders.PATCH("/:id", order.UpdateOrder(db))
 		orders.DELETE("/:id", order.DeleteOrder(db))
+
+		orders.GET("/:id/items", order.GetOrderItems(db))
 	}
 
 	payments := v1.Group("/payments")

@@ -19,3 +19,10 @@ func (OrderItem) TableName() string { return "order_items" }
 type OrderItemStorage interface {
 	GetOrderItemsByID(ctx context.Context, id int) (*[]OrderItem, error)
 }
+
+type MergedOrderItem struct {
+	ItemID    int     `json:"item_id"`
+	Quantity  int     `json:"quantity"`
+	UnitPrice float64 `json:"unit_price"`
+	Name      string  `json:"name"`
+}

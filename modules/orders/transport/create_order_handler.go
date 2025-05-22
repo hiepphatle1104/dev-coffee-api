@@ -1,6 +1,7 @@
 package ordertransport
 
 import (
+	"dev-coffee-api/common"
 	itemstorage "dev-coffee-api/modules/items/storage"
 	ordermodel "dev-coffee-api/modules/orders/model"
 	orderservice "dev-coffee-api/modules/orders/service"
@@ -14,7 +15,7 @@ func CreateOrder(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var data ordermodel.OrderCreation
 		if err := c.ShouldBind(&data); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, common.NewBadRequestErrorResponse(err))
 			return
 		}
 
@@ -24,10 +25,10 @@ func CreateOrder(db *gorm.DB) gin.HandlerFunc {
 
 		err := service.CreateOrder(c.Request.Context(), &data)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, common.NewErrorResponse(err))
 			return
 		}
 
-		c.JSON(http.StatusCreated, gin.H{"data": data.ID})
+		c.JSON(http.StatusCreated, common.NewSuccessCreatedResponse(data.ID))
 	}
 }

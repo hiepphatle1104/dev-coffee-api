@@ -1,6 +1,7 @@
 package itemtransport
 
 import (
+	"dev-coffee-api/common"
 	itemmodel "dev-coffee-api/modules/items/model"
 	itemservice "dev-coffee-api/modules/items/service"
 	itemstorage "dev-coffee-api/modules/items/storage"
@@ -13,7 +14,7 @@ func CreateNewItem(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var item itemmodel.ItemCreation
 		if err := c.ShouldBind(&item); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, common.NewBadRequestErrorResponse(err))
 			return
 		}
 
@@ -22,11 +23,10 @@ func CreateNewItem(db *gorm.DB) gin.HandlerFunc {
 
 		err := service.CreateNewItem(c.Request.Context(), &item)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, common.NewErrorResponse(err))
 			return
 		}
 
-		c.JSON(http.StatusCreated, gin.H{"data": true})
-
+		c.JSON(http.StatusCreated, common.NewSuccessCreatedResponse(item.ID))
 	}
 }

@@ -1,6 +1,7 @@
 package paymenttransport
 
 import (
+	"dev-coffee-api/common"
 	orderstorage "dev-coffee-api/modules/orders/storage"
 	paymentmodel "dev-coffee-api/modules/payments/model"
 	paymentservice "dev-coffee-api/modules/payments/service"
@@ -14,7 +15,7 @@ func CreateNewPayment(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var data paymentmodel.PaymentCreation
 		if err := c.ShouldBind(&data); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, common.NewBadRequestErrorResponse(err))
 			return
 		}
 
@@ -25,10 +26,10 @@ func CreateNewPayment(db *gorm.DB) gin.HandlerFunc {
 
 		err := service.CreateNewPayment(c.Request.Context(), &data)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, common.NewErrorResponse(err))
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"data": true})
+		c.JSON(http.StatusCreated, common.NewSuccessCreatedResponse(data.OrderID))
 	}
 }

@@ -1,6 +1,7 @@
 package ordertransport
 
 import (
+	"dev-coffee-api/common"
 	orderservice "dev-coffee-api/modules/orders/service"
 	orderstorage "dev-coffee-api/modules/orders/storage"
 	"github.com/gin-gonic/gin"
@@ -13,7 +14,7 @@ func DeleteOrder(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "id is required"})
+			c.JSON(http.StatusBadRequest, common.NewBadRequestErrorResponse(err))
 			return
 		}
 
@@ -22,7 +23,7 @@ func DeleteOrder(db *gorm.DB) gin.HandlerFunc {
 
 		err = service.DeleteOrderByID(c.Request.Context(), id)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, common.NewErrorResponse(err))
 			return
 		}
 

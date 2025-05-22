@@ -1,4 +1,4 @@
-package itemmodel
+package common
 
 type Paging struct {
 	Page  int   `json:"page" form:"page"`

@@ -1,6 +1,7 @@
 package ordertransport
 
 import (
+	"dev-coffee-api/common"
 	ordermodel "dev-coffee-api/modules/orders/model"
 	orderservice "dev-coffee-api/modules/orders/service"
 	orderstorage "dev-coffee-api/modules/orders/storage"
@@ -12,15 +13,15 @@ import (
 
 func GetOrdersList(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var paging ordermodel.Paging
+		var paging common.Paging
 		if err := c.ShouldBind(&paging); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, common.NewBadRequestErrorResponse(err))
 			return
 		}
 
 		paging.Process()
 		if err := db.Table(ordermodel.Order{}.TableName()).Count(&paging.Total).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, common.NewErrorResponse(err))
 			return
 		}
 
@@ -29,11 +30,11 @@ func GetOrdersList(db *gorm.DB) gin.HandlerFunc {
 
 		data, err := service.GetOrders(c.Request.Context(), &paging)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, common.NewErrorResponse(err))
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"data": data, "paging": paging})
+		c.JSON(http.StatusOK, common.NewSuccessResponseWithPaging(data, &paging))
 	}
 }
 
@@ -41,7 +42,7 @@ func GetOrderById(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "id is required"})
+			c.JSON(http.StatusBadRequest, common.NewBadRequestErrorResponse(err))
 			return
 		}
 
@@ -50,10 +51,31 @@ func GetOrderById(db *gorm.DB) gin.HandlerFunc {
 
 		data, err := service.GetOrderByID(c.Request.Context(), id)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, common.NewErrorResponse(err))
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"data": data})
+		c.JSON(http.StatusOK, common.NewSuccessResponse(data))
+	}
+}
+
+func GetOrderItems(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, common.NewBadRequestErrorResponse(err))
+			return
+		}
+
+		store := orderstorage.NewSQLStorage(db)
+		service := orderservice.NewGetOrderItemsService(store)
+
+		data, err := service.GetOrderItems(c.Request.Context(), id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, common.NewErrorResponse(err))
+			return
+		}
+
+		c.JSON(http.StatusOK, common.NewSuccessResponse(data))
 	}
 }

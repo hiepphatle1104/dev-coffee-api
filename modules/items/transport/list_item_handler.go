@@ -1,6 +1,7 @@
 package itemtransport
 
 import (
+	"dev-coffee-api/common"
 	itemmodel "dev-coffee-api/modules/items/model"
 	itemservice "dev-coffee-api/modules/items/service"
 	itemstorage "dev-coffee-api/modules/items/storage"
@@ -11,15 +12,15 @@ import (
 
 func GetItemsList(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var paging itemmodel.Paging
+		var paging common.Paging
 		if err := c.ShouldBind(&paging); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, common.NewBadRequestErrorResponse(err))
 			return
 		}
 
 		paging.Process()
 		if err := db.Table(itemmodel.Item{}.TableName()).Count(&paging.Total).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, common.NewBadRequestErrorResponse(err))
 			return
 		}
 
@@ -28,10 +29,10 @@ func GetItemsList(db *gorm.DB) gin.HandlerFunc {
 
 		items, err := service.GetItemList(c.Request.Context(), &paging)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, common.NewBadRequestErrorResponse(err))
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"data": items, "paging": paging})
+		c.JSON(http.StatusOK, common.NewSuccessResponseWithPaging(items, &paging))
 	}
 }

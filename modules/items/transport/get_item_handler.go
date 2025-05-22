@@ -1,6 +1,7 @@
 package itemtransport
 
 import (
+	"dev-coffee-api/common"
 	itemservice "dev-coffee-api/modules/items/service"
 	itemstorage "dev-coffee-api/modules/items/storage"
 	"github.com/gin-gonic/gin"
@@ -13,7 +14,7 @@ func GetItemByID(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "id is required"})
+			c.JSON(http.StatusBadRequest, common.NewBadRequestErrorResponse(err))
 			return
 		}
 
@@ -22,10 +23,10 @@ func GetItemByID(db *gorm.DB) gin.HandlerFunc {
 
 		item, err := service.GetItemById(c.Request.Context(), id)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, common.NewErrorResponse(err))
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"data": item})
+		c.JSON(http.StatusOK, common.NewSuccessResponse(item))
 	}
 }

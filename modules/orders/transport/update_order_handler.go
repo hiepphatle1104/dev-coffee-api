@@ -1,6 +1,7 @@
 package ordertransport
 
 import (
+	"dev-coffee-api/common"
 	itemstorage "dev-coffee-api/modules/items/storage"
 	ordermodel "dev-coffee-api/modules/orders/model"
 	orderservice "dev-coffee-api/modules/orders/service"
@@ -15,13 +16,13 @@ func UpdateOrder(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "id is required"})
+			c.JSON(http.StatusBadRequest, common.NewBadRequestErrorResponse(err))
 			return
 		}
 
 		var data ordermodel.OrderUpdate
 		if err = c.ShouldBind(&data); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, common.NewBadRequestErrorResponse(err))
 			return
 		}
 
@@ -31,10 +32,10 @@ func UpdateOrder(db *gorm.DB) gin.HandlerFunc {
 
 		err = service.UpdateOrderByID(c.Request.Context(), id, &data)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, common.NewErrorResponse(err))
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"data": true})
+		c.JSON(http.StatusOK, common.NewSuccessResponse(id))
 	}
 }
