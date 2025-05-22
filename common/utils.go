@@ -4,6 +4,7 @@ import (
 	itemmodel "dev-coffee-api/modules/items/model"
 	"errors"
 	"fmt"
+	"github.com/joho/godotenv"
 	"log"
 	"net/url"
 	"os"
@@ -17,6 +18,13 @@ func EnvLookup(key string) string {
 	}
 
 	return data
+}
+
+func LoadEnvFile() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error while loading .env file")
+	}
 }
 
 func ValidateImage(image *itemmodel.ItemImage) error {
