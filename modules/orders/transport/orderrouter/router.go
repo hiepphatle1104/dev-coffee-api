@@ -7,7 +7,7 @@ import (
 )
 
 func Initialize(v1 *gin.RouterGroup, db *gorm.DB) {
-	router := v1.Group("/router")
+	router := v1.Group("/orders")
 	{
 		router.GET("", order.GetOrdersList(db))
 		router.POST("", order.CreateOrder(db))

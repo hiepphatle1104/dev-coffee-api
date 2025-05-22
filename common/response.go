@@ -4,7 +4,7 @@ type Response struct {
 	Data    any          `json:"data"`
 	Message string       `json:"message"`
 	Success bool         `json:"success"`
-	Error   *CustomError `json:"error"`
+	Error   *CustomError `json:"error,omitempty"`
 	Paging  *Paging      `json:"paging,omitempty"`
 }
 
